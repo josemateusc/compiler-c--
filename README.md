@@ -1,6 +1,6 @@
 # Compiler for C--
 
-Project for th compiler course
+Project for the compiler course.
 
 This language obeys the following grammar:
 
