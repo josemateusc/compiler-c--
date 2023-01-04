@@ -1,5 +1,7 @@
 # Compiler for C--
 
+Project for th compiler course
+
 This language obeys the following grammar:
 
 ● Letras: ab ... zAB ... Z
