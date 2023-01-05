@@ -13,7 +13,8 @@ int main(int agrc, char *argv[]){
         printf("ERRO!");
     }
     
-    
+    printf("%c", prox_char(teste));
+
     fclose(teste);
     
 }
