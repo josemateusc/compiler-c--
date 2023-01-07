@@ -41,7 +41,7 @@ char sinais_pontuacao_token(char c){ //verificador de token para sinais de pontu
             return '(';
             break;
         case 4:
-            return ')'
+            return ')';
             break;
         case 5:
             return '[';
