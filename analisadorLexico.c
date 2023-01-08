@@ -6,6 +6,7 @@
 
 int i = 0; // variável global para percorrer a linha
 FILE *docLex;
+FILE *file;
 char linha[20000] = "";
  //buffer arbitrário
 
@@ -29,15 +30,15 @@ char prox_char(){
     }
     else{
         i = 0;
-        linha = "";
+        strcmp(linha, "");
         return '\n';
     }
 }
 
 void avanca(int* j, char* lexema, char* c){
-    lexema[j] = c;
-    j++;
-    c = prox_char();
+    lexema[*j] = *c;
+    *j+=1;
+    *c = prox_char();
 }
 
 int estado0(char c){ //função que simula estado 0
@@ -71,7 +72,7 @@ int estado0(char c){ //função que simula estado 0
     else if(c == '?'){estado = 62;}
     else if(c == ' ' || c == '\t' || c == '\n'){;}
     else{erro();} //"simbolo inválido"
-    return estado
+    return estado;
 }
 
 char* analex(){ //classificador de token
@@ -99,13 +100,13 @@ char* analex(){ //classificador de token
             case 3:
                 if(isdigit(c)){;}
                 else if(isalpha(c)){erro();}
-                else if(c == '.'){estado = 5}
+                else if(c == '.'){estado = 5;}
                 else{estado = 4;}
                 avanca(&j, lexema, &c);
                 break;
             case 4:
                 lexema[j-1] = '/0';
-                token = "num_inteiro";
+                strcmp(token,"NUM_INTEIRO");
                 i--;
                 return token, lexema;
             case 5:
@@ -121,7 +122,7 @@ char* analex(){ //classificador de token
                 break;
             case 7:
                 lexema[j-1] = '\0';
-                token = "num_real";
+                strcmp(token,"NUM_REAL");
                 i--;
                 return token, lexema;
             case 8:
@@ -131,7 +132,7 @@ char* analex(){ //classificador de token
                 avanca(&j, lexema, &c);
                 break;
             case 9:
-                token = "string";
+                strcmp(token,"STRING");
                 i--;
                 return token, lexema;
             case 10:
@@ -144,9 +145,9 @@ char* analex(){ //classificador de token
                 if(c == '\''){estado = 12;}
                 else{erro();}
             case 12:
-                token = "char";
+                strcmp(token,"CHAR");
                 i--;
-                return lexema, token;
+                return token,lexema;
         }
     }
 }
@@ -157,24 +158,9 @@ void concatenar_letra(char *str, char ch){
     str[size + 1] = '\0'; //recolocar terminador
 }
 
-void analexLine(char *str){
-    while(i < strlen(str)){
-        char token[200] = ""; //Verificar o tamanho do maior token possivel +1
-        char lexema[200] = "";
-        char ch;
-        while(token != ""){
-            ch = prox_char(str);
-            concatenar_letra(lexema,ch);
-            // strcpy(token,analex(lexema));
-        }
-        grava_token(token,lexema);
-    }
-    i = 0;
-}
-
 void main(int agrc, char *argv[]){
 
-    FILE *file = fopen(argv[1], "rb"); //abertura do arquivo
+    file = fopen(argv[1], "rb"); //abertura do arquivo
     if(file == NULL){
         printf("ERRO AO ABRIR O CODIGO!");
     }
@@ -188,10 +174,9 @@ void main(int agrc, char *argv[]){
     }
     //Enquanto o documento ainda não tiver acabado rodará o while
     while(!feof(file)){
-        /*a = 0;
-        token = id*/
-
-        token, lexema = analex();
+        char token[50];
+        char lexema[20000];
+        // token, lexema = analex(); //Acho que vamos ter que passar o token e lexema como parâmetros, não da para receber assim
         gravar_token(token, lexema);
     }
 
