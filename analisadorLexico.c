@@ -12,6 +12,7 @@ char linha[20000] = "";
 
 void grava_token(char *token, char *lexema){
     char buffer[strlen(token)+strlen(lexema)+2];
+    strcpy(buffer, "");
     strcat(buffer,token);
     strcat(buffer,"\t");
     strcat(buffer,lexema);
@@ -75,6 +76,57 @@ int estado0(char c){ //função que simula estado 0
     return estado;
 }
 
+char* palavraReservada(char *lexema){
+    if(strcmp("void", lexema) == 0){
+        return "VOID";
+    }
+    else if(strcmp("int", lexema) == 0){
+        return "INT";
+    }
+    else if(strcmp("float", lexema) == 0){
+        return "FLOAT";
+    }
+    else if(strcmp("char", lexema) == 0){
+        return "CHAR";
+    }
+    else if(strcmp("bool", lexema) == 0){
+        return "BOOL";
+    }
+    else if(strcmp("if", lexema) == 0){
+        return "IF";
+    }
+    else if(strcmp("else", lexema) == 0){
+        return "ELSE";
+    }
+    else if(strcmp("for", lexema) == 0){
+        return "FOR";
+    }
+    else if(strcmp("while", lexema) == 0){
+        return "WHILE";
+    }
+    else if(strcmp("do", lexema) == 0){
+        return "DO";
+    }
+    else if(strcmp("return", lexema) == 0){
+        return "RETURN";
+    }
+    else if(strcmp("break", lexema) == 0){
+        return "BREAK";
+    }
+    else if(strcmp("continue", lexema) == 0){
+        return "CONTINUE";
+    }
+    else if(strcmp("goto", lexema) == 0){
+        return "goto";
+    }
+    else if(strcmp("true", lexema) == 0){
+        return "TRUE";
+    }
+    else if(strcmp("false", lexema) == 0){
+        return "FALSE";
+    }
+}
+
 char* analex(){ //classificador de token
     char c = prox_char();  
     int estado = 0;
@@ -93,7 +145,7 @@ char* analex(){ //classificador de token
                 avanca(&j, lexema, &c);
                 break;
             case 2:
-                // token = verificar se é identificador, palavra reservada e booleano
+                // token = palavraReservada(lexema); //verificar se é identificador, palavra reservada e booleano
                 lexema[j-1] = '\0';
                 i--;
                 return token, lexema;
@@ -166,12 +218,7 @@ void main(int agrc, char *argv[]){
     }
 
     docLex = fopen("docLex.txt","wb");
-    if(strcmp("a","a")){
-        printf("OK\n");
-    }
-    else{
-        printf("No\n");
-    }
+
     //Enquanto o documento ainda não tiver acabado rodará o while
     while(!feof(file)){
         char token[50];
