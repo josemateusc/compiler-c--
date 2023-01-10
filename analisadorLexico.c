@@ -39,6 +39,7 @@ char prox_char(){
 void avanca(int* j, char* lexema, char* c){
     lexema[*j] = *c;
     *j+=1;
+    lexema[*j] = '\0';
     *c = prox_char();
 }
 
@@ -133,7 +134,7 @@ char* palavraReservada(char *lexema){
     }
 }
 
-void analex(char *token, char *lexema){ //classificador de token
+bool analex(char *token, char *lexema){ //classificador de token
     char c = prox_char();  
     int estado = 0;
     int j = 0;
@@ -152,6 +153,7 @@ void analex(char *token, char *lexema){ //classificador de token
                 lexema[j-1] = '\0';
                 strcpy(token, palavraReservada(lexema)); //verificar se é identificador, palavra reservada, booleano ou ID
                 i--;
+                return true;
                 break;
             case 3:
                 if(isdigit(c)){;}
@@ -164,9 +166,10 @@ void analex(char *token, char *lexema){ //classificador de token
                 avanca(&j, lexema, &c);
                 break;
             case 4:
-                lexema[j-1] = '/0';
+                lexema[j-1] = '\0';
                 strcpy(token, "NUM_INT");
                 i--;
+                return true;
                 break;
             case 5:
                 if(isdigit(c)){estado = 6;}
@@ -189,6 +192,7 @@ void analex(char *token, char *lexema){ //classificador de token
                 lexema[j-1] = '\0';
                 strcpy(token,"NUM_REAL");
                 i--;
+                return true;
                 break;
             case 8:
                 //if(c == '\n'){erro();}
@@ -199,6 +203,7 @@ void analex(char *token, char *lexema){ //classificador de token
             case 9:
                 strcpy(token,"STRING");
                 i--;
+                return true;
                 break;
             case 10:
                 if(c == '\''){estado = 12;}
@@ -215,8 +220,38 @@ void analex(char *token, char *lexema){ //classificador de token
             case 12:
                 strcpy(token,"CHAR");
                 i--;
+                return true;
                 break;
-            
+            case 13:
+                if(c == '/'){estado=14;}
+                else if(c == '='){estado=19;}
+                else if(c == '*'){estado=16;}
+                else{estado=18;}
+            case 14:
+                if(c == '\n'){return true;}
+                else{avanca(&j, lexema, &c);}
+                break;
+            case 16:
+                if(c == '*'){estado=17;}
+                else{avanca(&j, lexema, &c);}
+                break;
+            case 17:
+                if(c == '/'){return true;}
+                else{
+                    gravar_token("ERRO no comentário", lexema);
+                    exit(0);
+                }
+            case 18:
+                strcpy(token,"DIV");
+                i--;
+                return true;
+                break;
+            case 19:
+                avanca(&j, lexema, &c);
+                i--;
+                strcpy(token,"/=");
+                return true;
+                break;
         }
     }
 }
