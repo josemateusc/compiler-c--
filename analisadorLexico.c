@@ -3,13 +3,14 @@
 #include<string.h>
 #include<stdlib.h>
 #include<ctype.h>
+#include<stdbool.h>
 
 int i = 0; // variável global para percorrer a linha
 FILE *docLex;
 FILE *file;
-char linha[20000] = "";//buffer arbitrário
+char linha[2000];//buffer arbitrário
 
-void grava_token(char *token, char *lexema){
+void gravar_token(char *token, char *lexema){
     char buffer[strlen(token)+strlen(lexema)+2];
     strcpy(buffer, "");
     strcat(buffer,token);
@@ -22,7 +23,7 @@ void grava_token(char *token, char *lexema){
 
 char prox_char(){
     if(strlen(linha) == 0){
-        fgets(linha, 20000, file);
+        fgets(linha, 2000, file);
     }
     if(linha[i] != '\n'){
         char c = linha[i];
@@ -135,7 +136,10 @@ char* palavraReservada(char *lexema){
 }
 
 bool analex(char *token, char *lexema){ //classificador de token
-    char c = prox_char();  
+    printf("Chamando prox char... \n");
+    char c = prox_char();
+    printf("prox char \n ");
+    printf("Char: %c",c); //Erro esta no c
     int estado = 0;
     int j = 0;
     while(1){
@@ -264,13 +268,16 @@ int main(int agrc, char *argv[]){
     }
 
     docLex = fopen("docLex.txt","wb");
+    strcpy(linha,"");
 
     //Enquanto o documento ainda não tiver acabado rodará o while
     while(!feof(file)){
         char token[15] = "";
         char *lexema = malloc(100000 * sizeof(char));
         lexema = "";
+        printf("chamando o analex ...\n");
         analex(token, lexema);
+        printf("Gravando o token ...\n");
         gravar_token(token, lexema);
     }
 
