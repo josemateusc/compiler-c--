@@ -155,55 +155,68 @@ void analex(char *token, char *lexema){ //classificador de token
                 break;
             case 3:
                 if(isdigit(c)){;}
-                else if(isalpha(c)){erro();}
+                else if(isalpha(c)){
+                    gravar_token("ERRO no numero", lexema);
+                    exit(0);
+                }
                 else if(c == '.'){estado = 5;}
                 else{estado = 4;}
                 avanca(&j, lexema, &c);
                 break;
             case 4:
                 lexema[j-1] = '/0';
-                strcmp(token,"NUM_INTEIRO");
+                strcpy(token, "NUM_INT");
                 i--;
-                return token, lexema;
+                break;
             case 5:
                 if(isdigit(c)){estado = 6;}
-                else{erro();}
+                else{
+                    gravar_token("ERRO numero real incompleto", lexema);
+                    exit(0);
+                }
                 avanca(&j, lexema, &c);
                 break;
             case 6:
                 if(isdigit(c)){;}
-                else if(isalpha(c)){erro();}
+                else if(isalpha(c)){
+                    gravar_token("ERRO no numero real", lexema);
+                    exit(0);
+                }
                 else{estado = 7;}
                 avanca(&j, lexema, &c);
                 break;
             case 7:
                 lexema[j-1] = '\0';
-                strcmp(token,"NUM_REAL");
+                strcpy(token,"NUM_REAL");
                 i--;
-                return token, lexema;
+                break;
             case 8:
-                if(c == '\n'){erro();}
-                else if(c == '\"'){estado = 9;}
+                //if(c == '\n'){erro();}
+                if(c == '\"'){estado = 9;}
                 else{;}
                 avanca(&j, lexema, &c);
                 break;
             case 9:
-                strcmp(token,"STRING");
+                strcpy(token,"STRING");
                 i--;
-                return token, lexema;
+                break;
             case 10:
-                if(c == '\n'){erro();}
+                if(c == '\''){estado = 12;}
                 else{estado = 11;}
                 avanca(&j, lexema, &c);
                 break;
             case 11:
-            //verifica char ?
                 if(c == '\''){estado = 12;}
-                else{erro();}
+                else{
+                    gravar_token("ERRO no char", lexema);
+                    exit(0);
+                }
+                break;
             case 12:
-                strcmp(token,"CHAR");
+                strcpy(token,"CHAR");
                 i--;
-                return token,lexema;
+                break;
+            
         }
     }
 }
