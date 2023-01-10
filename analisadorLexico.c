@@ -9,14 +9,19 @@ int i = 0; // variável global para percorrer a linha
 FILE *docLex;
 FILE *file;
 char linha[2000];//buffer arbitrário
+bool firstSaved;
 
 void gravar_token(char *token, char *lexema){
     char buffer[strlen(token)+strlen(lexema)+2];
-    strcpy(buffer, "");
+    if(!firstSaved){
+        strcpy(buffer, "");
+        firstSaved = true;
+    }else{
+        strcpy(buffer,"\n");
+    }
     strcat(buffer,token);
     strcat(buffer,"\t");
     strcat(buffer,lexema);
-    strcat(buffer,"\n");
     printf("TOKEN\tLEXEMA\n%s\n", buffer);
     fwrite(buffer, sizeof(char), strlen(buffer), docLex);
 }
@@ -144,9 +149,7 @@ bool analex(char *token, char *lexema){ //classificador de token
         switch (estado){
             case 0:
                 estado = estado0(c);
-                if(estado == 0){
-                    c = prox_char();
-                }
+                if(estado == 0){c = prox_char();}
                 else{avanca(&j, lexema, &c);}
                 break;
             case 1:
@@ -233,16 +236,23 @@ bool analex(char *token, char *lexema){ //classificador de token
                 else if(c == '='){estado=19;}
                 else if(c == '*'){estado=16;}
                 else{estado=18;}
+                break;
             case 14:
+                avanca(&j, lexema, &c);
                 if(c == '\n'){strcpy(lexema,"");return true;}
+                else if(feof(file)){
+                    strcpy(token,"FIM_DO_ARQUIVO");
+                }
                 else{avanca(&j, lexema, &c);}
                 break;
             case 16:
+                avanca(&j, lexema, &c);
                 if(c == '*'){estado=17;}
                 else{;}
                 avanca(&j, lexema, &c);
                 break;
             case 17:
+                avanca(&j, lexema, &c);
                 if(c == '/'){return true;}
                 else{
                     gravar_token("ERRO no comentário", lexema);
@@ -250,12 +260,11 @@ bool analex(char *token, char *lexema){ //classificador de token
                 }
             case 18:
                 strcpy(token,"OP_DIV");// /
-                i--;
+                // i--;
                 return true;
                 break;
             case 19:
                 avanca(&j, lexema, &c);
-                i--;
                 strcpy(token,"OP_DIV_REC");// /=
                 return true;
                 break;
@@ -266,18 +275,18 @@ bool analex(char *token, char *lexema){ //classificador de token
                 break;
             case 21:
                 avanca(&j, lexema, &c);
-                i--;
+                // i--;
                 strcpy(token,"OP_INC"); //++
                 return true;
                 break;
             case 22:
                 strcpy(token,"OP_SOMA"); // +
-                i--;
+                // i--;
                 return true;
                 break;
             case 23:
                 avanca(&j, lexema, &c);
-                i--;
+                // i--;
                 strcpy(token,"OP_SOMA_REC"); //+=
                 return true;
                 break;
@@ -289,24 +298,24 @@ bool analex(char *token, char *lexema){ //classificador de token
                 break;
             case 25:
                 strcpy(token,"OP_SUB"); // -
-                i--;
+                // i--;
                 return true;
                 break;
             case 26:
                 avanca(&j, lexema, &c);
-                i--;
+                // i--;
                 strcpy(token,"OP_DEC"); // --
                 return true;
                 break;
             case 27:
                 avanca(&j, lexema, &c);
-                i--;
+                // i--;
                 strcpy(token,"OP_SUB_REC"); // -=
                 return true;
                 break;
             case 28:
                 avanca(&j, lexema, &c);
-                i--;
+                // i--;
                 strcpy(token,"SETA"); // ->
                 return true;
                 break;
@@ -316,17 +325,46 @@ bool analex(char *token, char *lexema){ //classificador de token
                 break;
             case 30:
                 avanca(&j, lexema, &c);
-                i--;
+                // i--;
                 strcpy(token,"OP_MULT_REC"); // *=
                 return true;
                 break;
             case 31:
                 strcpy(token,"OP_MULT"); // *
-                i--;
+                // i--;
+                return true;
+                break;
+            case 32:
+                if(c == '='){estado=34;}
+                else{estado=33;}
+                break;
+            case 33:
+                strcpy(token,"OP_RESTO"); // %
+                // i--;
+                return true;
+                break;
+            case 34:
+                avanca(&j, lexema, &c);
+                // i--;
+                strcpy(token,"OP_RESTO_REC"); // %=
                 return true;
                 break;
 
-                
+            case 35:
+                if(c == '='){estado=36;}
+                else{estado=37;}
+                break;
+            case 36:
+                avanca(&j, lexema, &c);
+                // i--;
+                strcpy(token,"COMP_IGUAL"); // ==
+                return true;
+                break;
+            case 37:
+                strcpy(token,"OP_ATRIB"); // =
+                // i--;
+                return true;
+                break;
             case 99: //fim do arquivo
                 strcpy(token,"FIM_DO_ARQUIVO");
                 return true;
@@ -344,7 +382,7 @@ int main(int agrc, char *argv[]){
 
     docLex = fopen("docLex.txt","wb");
     strcpy(linha,"");
-
+    firstSaved = false;
     //Enquanto o documento ainda não tiver acabado rodará o while
     while(1){
         char token[15] = "";
