@@ -7,8 +7,7 @@
 int i = 0; // variável global para percorrer a linha
 FILE *docLex;
 FILE *file;
-char linha[20000] = "";
- //buffer arbitrário
+char linha[20000] = "";//buffer arbitrário
 
 void grava_token(char *token, char *lexema){
     char buffer[strlen(token)+strlen(lexema)+2];
@@ -17,7 +16,8 @@ void grava_token(char *token, char *lexema){
     strcat(buffer,"\t");
     strcat(buffer,lexema);
     strcat(buffer,"\n");
-    fwrite(buffer, sizeof(buffer), 1, docLex);
+    printf("%s\n", buffer);
+    fwrite(buffer, sizeof(char), strlen(buffer), docLex);
 }
 
 char prox_char(){
@@ -72,7 +72,10 @@ int estado0(char c){ //função que simula estado 0
     else if(c == ':'){estado = 61;}
     else if(c == '?'){estado = 62;}
     else if(c == ' ' || c == '\t' || c == '\n'){;}
-    else{erro();} //"simbolo inválido"
+    else{
+        gravar_token("ERRO simbolo desconhecido", &c);
+        exit(0);
+    }
     return estado;
 }
 
@@ -125,13 +128,14 @@ char* palavraReservada(char *lexema){
     else if(strcmp("false", lexema) == 0){
         return "FALSE";
     }
+    else{
+        return "ID";
+    }
 }
 
-char* analex(){ //classificador de token
+void analex(char *token, char *lexema){ //classificador de token
     char c = prox_char();  
     int estado = 0;
-    char token[30]; //,valor arb
-    char lexema[100];
     int j = 0;
     while(1){
         switch (estado){
@@ -145,10 +149,10 @@ char* analex(){ //classificador de token
                 avanca(&j, lexema, &c);
                 break;
             case 2:
-                // token = palavraReservada(lexema); //verificar se é identificador, palavra reservada e booleano
                 lexema[j-1] = '\0';
+                strcpy(token, palavraReservada(lexema)); //verificar se é identificador, palavra reservada, booleano ou ID
                 i--;
-                return token, lexema;
+                break;
             case 3:
                 if(isdigit(c)){;}
                 else if(isalpha(c)){erro();}
@@ -204,13 +208,7 @@ char* analex(){ //classificador de token
     }
 }
 
-void concatenar_letra(char *str, char ch){
-    long int size = strlen(str);
-    str[size] = ch;
-    str[size + 1] = '\0'; //recolocar terminador
-}
-
-void main(int agrc, char *argv[]){
+int main(int agrc, char *argv[]){
 
     file = fopen(argv[1], "rb"); //abertura do arquivo
     if(file == NULL){
@@ -221,12 +219,14 @@ void main(int agrc, char *argv[]){
 
     //Enquanto o documento ainda não tiver acabado rodará o while
     while(!feof(file)){
-        char token[50];
-        char lexema[20000];
-        // token, lexema = analex(); //Acho que vamos ter que passar o token e lexema como parâmetros, não da para receber assim
+        char token[15] = "";
+        char *lexema = malloc(100000 * sizeof(char));
+        lexema = "";
+        analex(token, lexema);
         gravar_token(token, lexema);
     }
 
     fclose(file);
-    fclose(docLex);  
+    fclose(docLex);
+    return 0;
 }
