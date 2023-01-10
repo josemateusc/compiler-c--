@@ -17,7 +17,7 @@ void gravar_token(char *token, char *lexema){
     strcat(buffer,"\t");
     strcat(buffer,lexema);
     strcat(buffer,"\n");
-    printf("%s\n", buffer);
+    printf("TOKEN\tLEXEMA\n%s\n", buffer);
     fwrite(buffer, sizeof(char), strlen(buffer), docLex);
 }
 
@@ -25,19 +25,19 @@ char prox_char(){
     if(strlen(linha) == 0){
         fgets(linha, 2000, file);
     }
-    if(linha[i] != '\n'){
+    if(linha[i] != '\n' || linha[i] == '\0'){
         char c = linha[i];
         i++;
         return c;
     }
     else{
         i = 0;
-        strcmp(linha, "");
+        strcpy(linha, "");
         return '\n';
     }
 }
 
-void avanca(int* j, char* lexema, char* c){
+void avanca(int *j, char *lexema, char *c){
     lexema[*j] = *c;
     *j+=1;
     lexema[*j] = '\0';
@@ -73,7 +73,8 @@ int estado0(char c){ //função que simula estado 0
     else if(c == '}'){estado = 60;}
     else if(c == ':'){estado = 61;}
     else if(c == '?'){estado = 62;}
-    else if(c == ' ' || c == '\t' || c == '\n'){;}
+    else if(c == '\n' || c == ' ' || c == '\t'){estado=0;}
+    else if(c == '\0'){estado=99;}
     else{
         gravar_token("ERRO simbolo desconhecido", &c);
         exit(0);
@@ -136,17 +137,17 @@ char* palavraReservada(char *lexema){
 }
 
 bool analex(char *token, char *lexema){ //classificador de token
-    printf("Chamando prox char... \n");
     char c = prox_char();
-    printf("prox char \n ");
-    printf("Char: %c",c); //Erro esta no c
     int estado = 0;
     int j = 0;
     while(1){
         switch (estado){
             case 0:
                 estado = estado0(c);
-                avanca(&j, lexema, &c);
+                if(estado == 0){
+                    c = prox_char();
+                }
+                else{avanca(&j, lexema, &c);}
                 break;
             case 1:
                 if(isdigit(c) || isalpha(c)){;}
@@ -220,6 +221,7 @@ bool analex(char *token, char *lexema){ //classificador de token
                     gravar_token("ERRO no char", lexema);
                     exit(0);
                 }
+                avanca(&j, lexema, &c);
                 break;
             case 12:
                 strcpy(token,"CHAR");
@@ -232,7 +234,7 @@ bool analex(char *token, char *lexema){ //classificador de token
                 else if(c == '*'){estado=16;}
                 else{estado=18;}
             case 14:
-                if(c == '\n'){return true;}
+                if(c == '\n'){strcpy(lexema,"");return true;}
                 else{avanca(&j, lexema, &c);}
                 break;
             case 16:
@@ -256,6 +258,11 @@ bool analex(char *token, char *lexema){ //classificador de token
                 strcpy(token,"/=");
                 return true;
                 break;
+            
+            case 99: //fim do arquivo
+                strcpy(token,"FIM_DO_ARQUIVO");
+                return true;
+                break;
         }
     }
 }
@@ -271,14 +278,13 @@ int main(int agrc, char *argv[]){
     strcpy(linha,"");
 
     //Enquanto o documento ainda não tiver acabado rodará o while
-    while(!feof(file)){
+    while(1){
         char token[15] = "";
         char *lexema = malloc(100000 * sizeof(char));
-        lexema = "";
-        printf("chamando o analex ...\n");
+        strcpy(lexema,"");
         analex(token, lexema);
-        printf("Gravando o token ...\n");
-        gravar_token(token, lexema);
+        if(!strcmp(token,"FIM_DO_ARQUIVO")){printf("Fim da Analise léxica\n\n");break;}
+        else if(strcmp(token,"")){gravar_token(token, lexema);}
     }
 
     fclose(file);

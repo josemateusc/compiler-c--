@@ -1,0 +1,5 @@
+CHAR	'a'
+STRING	"oiasfda sasa"
+CHAR	'a'
+NUM_REAL	15165.1
+STRING	"oi"
