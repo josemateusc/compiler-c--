@@ -1,5 +1,8 @@
-CHAR	'a'
-STRING	"oiasfda sasa"
-CHAR	'a'
 NUM_REAL	15165.1
-STRING	"oi"
+VOID	void
+CHAR	'a'
+NUM_INT	45
+NUM_REAL	145.42
+STRING	"Giovanna"
+NUM_INT	4
+ID	oi

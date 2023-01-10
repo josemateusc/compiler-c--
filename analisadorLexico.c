@@ -207,7 +207,7 @@ bool analex(char *token, char *lexema){ //classificador de token
                 break;
             case 9:
                 strcpy(token,"STRING");
-                i--;
+                // i--;
                 return true;
                 break;
             case 10:
@@ -225,7 +225,7 @@ bool analex(char *token, char *lexema){ //classificador de token
                 break;
             case 12:
                 strcpy(token,"CHAR");
-                i--;
+                // i--;
                 return true;
                 break;
             case 13:
@@ -239,7 +239,8 @@ bool analex(char *token, char *lexema){ //classificador de token
                 break;
             case 16:
                 if(c == '*'){estado=17;}
-                else{avanca(&j, lexema, &c);}
+                else{;}
+                avanca(&j, lexema, &c);
                 break;
             case 17:
                 if(c == '/'){return true;}

@@ -1,6 +1,11 @@
-'a' 
-"oiasfda sasa" 
-//asdfasf
-'a' 
+
 15165.1
-"oi"
+void
+'a'
+45
+145.42
+"Giovanna"
+4
+//afakifknd
+/*asfa*/
+oi
