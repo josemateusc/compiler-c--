@@ -22,7 +22,7 @@ void gravar_token(char *token, char *lexema){
     strcat(buffer,token);
     strcat(buffer,"\t");
     strcat(buffer,lexema);
-    printf("TOKEN\tLEXEMA\n%s\n", buffer);
+    printf("TOKEN\tLEXEMA%s\n\n", buffer);
     fwrite(buffer, sizeof(char), strlen(buffer), docLex);
 }
 
@@ -365,6 +365,74 @@ bool analex(char *token, char *lexema){ //classificador de token
                 // i--;
                 return true;
                 break;
+            case 38:
+                if(c == '='){estado=39;}
+                else{estado=40;}
+                break;
+            case 39:
+                avanca(&j, lexema, &c);
+                strcpy(token,"COMP_DIF"); // !=
+                return true;
+                break;
+            case 40:
+                strcpy(token,"OP_NOT"); // !
+                return true;
+                break;
+            case 41:
+                if(c == '='){estado=42;}
+                else{estado=43;}
+                break;
+            case 42:
+                avanca(&j, lexema, &c);
+                strcpy(token,"MAIOR_IGUAL"); // >=
+                return true;
+                break;
+            case 43:
+                strcpy(token,"MAIOR"); // >
+                return true;
+                break;
+            case 44:
+                if(c == '='){estado=46;}
+                else{estado=45;}
+                break;
+            case 45:
+                strcpy(token,"MENOR"); // <
+                return true;
+                break;
+            case 46:
+                avanca(&j, lexema, &c);
+                strcpy(token,"MENOR_IGUAL"); // <=
+                return true;
+                break;
+            case 47:
+                if(c == '|'){estado=48;}
+                else{
+                    gravar_token("ERRO de simbolo incompleto", lexema);
+                    exit(0);
+                }
+                break;
+            case 48:
+                avanca(&j, lexema, &c);
+                strcpy(token,"OU"); // ||
+                return true;
+                break;
+            
+
+            case 49:
+                if(c == '&'){estado=50;}
+                else{estado=51;}
+                break;
+            case 50:
+                avanca(&j, lexema, &c);
+                strcpy(token,"E"); // &&
+                return true;
+                break;
+            case 51:
+                strcpy(token,"ENDERECO"); // &
+                return true;
+                break;
+
+            
             case 99: //fim do arquivo
                 strcpy(token,"FIM_DO_ARQUIVO");
                 return true;
