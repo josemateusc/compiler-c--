@@ -249,17 +249,84 @@ bool analex(char *token, char *lexema){ //classificador de token
                     exit(0);
                 }
             case 18:
-                strcpy(token,"DIV");
+                strcpy(token,"OP_DIV");// /
                 i--;
                 return true;
                 break;
             case 19:
                 avanca(&j, lexema, &c);
                 i--;
-                strcpy(token,"/=");
+                strcpy(token,"OP_DIV_REC");// /=
                 return true;
                 break;
-            
+            case 20:
+                if(c == '+'){estado=21;}
+                else if(c == '='){estado=23;}
+                else{estado=22;}
+                break;
+            case 21:
+                avanca(&j, lexema, &c);
+                i--;
+                strcpy(token,"OP_INC"); //++
+                return true;
+                break;
+            case 22:
+                strcpy(token,"OP_SOMA"); // +
+                i--;
+                return true;
+                break;
+            case 23:
+                avanca(&j, lexema, &c);
+                i--;
+                strcpy(token,"OP_SOMA_REC"); //+=
+                return true;
+                break;
+            case 24:
+                if(c == '-'){estado=26;}
+                else if(c == '='){estado=27;}
+                else if(c == '>'){estado=28;}
+                else{estado=25;}
+                break;
+            case 25:
+                strcpy(token,"OP_SUB"); // -
+                i--;
+                return true;
+                break;
+            case 26:
+                avanca(&j, lexema, &c);
+                i--;
+                strcpy(token,"OP_DEC"); // --
+                return true;
+                break;
+            case 27:
+                avanca(&j, lexema, &c);
+                i--;
+                strcpy(token,"OP_SUB_REC"); // -=
+                return true;
+                break;
+            case 28:
+                avanca(&j, lexema, &c);
+                i--;
+                strcpy(token,"SETA"); // ->
+                return true;
+                break;
+            case 29:
+                if(c == '='){estado=30;}
+                else{estado=31;}
+                break;
+            case 30:
+                avanca(&j, lexema, &c);
+                i--;
+                strcpy(token,"OP_MULT_REC"); // *=
+                return true;
+                break;
+            case 31:
+                strcpy(token,"OP_MULT"); // *
+                i--;
+                return true;
+                break;
+
+                
             case 99: //fim do arquivo
                 strcpy(token,"FIM_DO_ARQUIVO");
                 return true;

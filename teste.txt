@@ -9,3 +9,7 @@ void
 //afakifknd
 /*asfa*/
 oi
+154
+id1 += 11
+++ + -- -> -= - /=
+* *=
