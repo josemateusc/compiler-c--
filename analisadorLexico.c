@@ -239,7 +239,7 @@ bool analex(char *token, char *lexema){ //classificador de token
                 break;
             case 14:
                 avanca(&j, lexema, &c);
-                if(c == '\n'){strcpy(lexema,"");return true;}
+                if(c == '\n' || c == '\0'){strcpy(lexema,"");return true;}
                 else if(feof(file)){
                     strcpy(token,"FIM_DO_ARQUIVO");
                 }

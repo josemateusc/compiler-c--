@@ -1,3 +1,7 @@
 INT	int
 ID	as
 OP_ATRIB	=
+NUM_INT	3
+COMP_IGUAL	==
+OP_ATRIB	=
+ENDERECO	&
