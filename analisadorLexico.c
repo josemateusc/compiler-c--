@@ -31,13 +31,15 @@ char prox_char(){
     if(strlen(linha) == 0){
         fgets(linha, 2000, file);
     }
-    char c = linha[i];
-    if(c != '\n' && c != '\0'){ //linha[i] != '\n' || linha[i] == '\0'
+    char c = linha[i];//c != '\n' &&
+    if(c != '\0'){ //linha[i] != '\n' || linha[i] == '\0'
         i++;
     }
+    // else if(feof(file) && c == '\0'){;}
     else{
         i = 0;
         strcpy(linha, "");
+        // c = '\n';
     }
     return c;
 }
@@ -164,7 +166,7 @@ bool analex(char *token, char *lexema){ //classificador de token
             case 2:
                 // lexema[j-1] = '\0';
                 strcpy(token, palavraReservada(lexema)); //verificar se é identificador, palavra reservada, booleano ou ID
-                i-=1;
+                i--;
                 return true;
                 break;
             case 3:
@@ -252,7 +254,6 @@ bool analex(char *token, char *lexema){ //classificador de token
                 avanca(&j, lexema, &c);
                 if(c == '*'){estado=17;}
                 else{;}
-                avanca(&j, lexema, &c);
                 break;
             case 17:
                 avanca(&j, lexema, &c);
@@ -461,7 +462,7 @@ int main(int agrc, char *argv[]){
         strcpy(token,"");
         strcpy(lexema,"");
         analex(token, lexema);
-        if(!strcmp(token,"FIM_DO_ARQUIVO")){printf("Fim da Analise léxica\n\n");break;}
+        if(!strcmp(token,"FIM_DO_ARQUIVO")){printf("\nFim da Analise léxica\n\n");break;}
         else if(strcmp(token,"")){gravar_token(token, lexema);}
     }
 
