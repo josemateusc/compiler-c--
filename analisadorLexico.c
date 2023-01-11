@@ -22,24 +22,24 @@ void gravar_token(char *token, char *lexema){
     strcat(buffer,token);
     strcat(buffer,"\t");
     strcat(buffer,lexema);
-    printf("TOKEN\tLEXEMA%s\n\n", buffer);
+    printf("TOKEN\tLEXEMA\n%s\n", buffer);
     fwrite(buffer, sizeof(char), strlen(buffer), docLex);
+    
 }
 
 char prox_char(){
     if(strlen(linha) == 0){
         fgets(linha, 2000, file);
     }
-    if(linha[i] != '\n' || linha[i] == '\0'){
-        char c = linha[i];
+    char c = linha[i];
+    if(c != '\n' && c != '\0'){ //linha[i] != '\n' || linha[i] == '\0'
         i++;
-        return c;
     }
     else{
         i = 0;
         strcpy(linha, "");
-        return '\n';
     }
+    return c;
 }
 
 void avanca(int *j, char *lexema, char *c){
@@ -204,7 +204,7 @@ bool analex(char *token, char *lexema){ //classificador de token
                 break;
             case 8:
                 //if(c == '\n'){erro();}
-                if(c == '\"'){estado = 9;}
+                if(c == '"'){estado = 9;}
                 else{;}
                 avanca(&j, lexema, &c);
                 break;
@@ -349,7 +349,6 @@ bool analex(char *token, char *lexema){ //classificador de token
                 strcpy(token,"OP_RESTO_REC"); // %=
                 return true;
                 break;
-
             case 35:
                 if(c == '='){estado=36;}
                 else{estado=37;}
@@ -416,8 +415,6 @@ bool analex(char *token, char *lexema){ //classificador de token
                 strcpy(token,"OU"); // ||
                 return true;
                 break;
-            
-
             case 49:
                 if(c == '&'){estado=50;}
                 else{estado=51;}
@@ -447,14 +444,15 @@ int main(int agrc, char *argv[]){
     if(file == NULL){
         printf("ERRO AO ABRIR O CODIGO!");
     }
-
+    
     docLex = fopen("docLex.txt","wb");
     strcpy(linha,"");
     firstSaved = false;
+    char token[15];
+    char *lexema = malloc(100000 * sizeof(char));
     //Enquanto o documento ainda não tiver acabado rodará o while
     while(1){
-        char token[15] = "";
-        char *lexema = malloc(100000 * sizeof(char));
+        strcpy(token,"");
         strcpy(lexema,"");
         analex(token, lexema);
         if(!strcmp(token,"FIM_DO_ARQUIVO")){printf("Fim da Analise léxica\n\n");break;}
