@@ -435,8 +435,61 @@ bool analex(char *token, char *lexema){ //classificador de token
                 i--;
                 return true;
                 break;
-
-            
+            case 52:
+                strcpy(token,"VIRG"); // ,
+                i--;
+                return true;
+                break;
+            case 53:
+                strcpy(token,"PV"); // ;
+                i--;
+                return true;
+                break;
+            case 54:
+                strcpy(token,"PONTO"); // .
+                i--;
+                return true;
+                break;
+            case 55:
+                strcpy(token,"ABRE_PAREN"); // (
+                i--;
+                return true;
+                break;
+            case 56:
+                strcpy(token,"FECHA_PAREN"); // )
+                i--;
+                return true;
+                break;
+            case 57:
+                strcpy(token,"FECHA_COLC"); // ]
+                i--;
+                return true;
+                break;
+            case 58:
+                strcpy(token,"ABRE_COLC"); // [
+                i--;
+                return true;
+                break;
+            case 59:
+                strcpy(token,"ABRE_CHAV"); // {
+                i--;
+                return true;
+                break;
+            case 60:
+                strcpy(token,"FECHA_CHAV"); // }
+                i--;
+                return true;
+                break;
+            case 61:
+                strcpy(token,"OP_DOIS_PONTOS"); // :
+                i--;
+                return true;
+                break;
+            case 62:
+                strcpy(token,"OP_SELEC"); // ?
+                i--;
+                return true;
+                break;
             case 99: //fim do arquivo
                 strcpy(token,"FIM_DO_ARQUIVO");
                 return true;
@@ -466,6 +519,7 @@ int main(int agrc, char *argv[]){
         else if(strcmp(token,"")){gravar_token(token, lexema);}
     }
 
+    free(lexema);
     fclose(file);
     fclose(docLex);
     return 0;
