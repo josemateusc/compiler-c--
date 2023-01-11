@@ -42,10 +42,14 @@ char prox_char(){
     return c;
 }
 
-void avanca(int *j, char *lexema, char *c){
+void salvaLexema(int *j, char *lexema, char *c){
     lexema[*j] = *c;
     *j+=1;
     lexema[*j] = '\0';
+}
+
+void avanca(int *j, char *lexema, char *c){
+    salvaLexema(j,lexema,c);
     *c = prox_char();
 }
 
@@ -79,7 +83,8 @@ int estado0(char c){ //função que simula estado 0
     else if(c == ':'){estado = 61;}
     else if(c == '?'){estado = 62;}
     else if(c == '\n' || c == ' ' || c == '\t'){estado=0;}
-    else if(c == '\0'){estado=99;}
+    else if(c == '\0' && feof(file)){estado=99;}
+    else if(c == '\0'){estado=0;}
     else{
         gravar_token("ERRO simbolo desconhecido", &c);
         exit(0);
@@ -153,51 +158,49 @@ bool analex(char *token, char *lexema){ //classificador de token
                 else{avanca(&j, lexema, &c);}
                 break;
             case 1:
-                if(isdigit(c) || isalpha(c)){;}
+                if(isdigit(c) || isalpha(c)){avanca(&j, lexema, &c);}
                 else if(!(isdigit(c) || isalpha(c))){estado = 2;}
-                avanca(&j, lexema, &c);
                 break;
             case 2:
-                lexema[j-1] = '\0';
+                // lexema[j-1] = '\0';
                 strcpy(token, palavraReservada(lexema)); //verificar se é identificador, palavra reservada, booleano ou ID
-                i--;
+                i-=1;
                 return true;
                 break;
             case 3:
-                if(isdigit(c)){;}
+                if(isdigit(c)){avanca(&j, lexema, &c);}
                 else if(isalpha(c)){
                     gravar_token("ERRO no numero", lexema);
                     exit(0);
                 }
-                else if(c == '.'){estado = 5;}
+                else if(c == '.'){estado = 5;avanca(&j, lexema, &c);}
                 else{estado = 4;}
-                avanca(&j, lexema, &c);
+                
                 break;
             case 4:
-                lexema[j-1] = '\0';
+                // lexema[j-1] = '\0';
                 strcpy(token, "NUM_INT");
                 i--;
                 return true;
                 break;
             case 5:
-                if(isdigit(c)){estado = 6;}
+                if(isdigit(c)){estado = 6;avanca(&j, lexema, &c);}
                 else{
                     gravar_token("ERRO numero real incompleto", lexema);
                     exit(0);
                 }
-                avanca(&j, lexema, &c);
                 break;
             case 6:
-                if(isdigit(c)){;}
+                if(isdigit(c)){avanca(&j, lexema, &c);}
                 else if(isalpha(c)){
                     gravar_token("ERRO no numero real", lexema);
                     exit(0);
                 }
                 else{estado = 7;}
-                avanca(&j, lexema, &c);
+                // avanca(&j, lexema, &c);
                 break;
             case 7:
-                lexema[j-1] = '\0';
+                // lexema[j-1] = '\0';
                 strcpy(token,"NUM_REAL");
                 i--;
                 return true;
@@ -210,7 +213,7 @@ bool analex(char *token, char *lexema){ //classificador de token
                 break;
             case 9:
                 strcpy(token,"STRING");
-                // i--;
+                i--;
                 return true;
                 break;
             case 10:
@@ -228,7 +231,7 @@ bool analex(char *token, char *lexema){ //classificador de token
                 break;
             case 12:
                 strcpy(token,"CHAR");
-                // i--;
+                i--;
                 return true;
                 break;
             case 13:
@@ -260,11 +263,11 @@ bool analex(char *token, char *lexema){ //classificador de token
                 }
             case 18:
                 strcpy(token,"OP_DIV");// /
-                // i--;
+                i--;
                 return true;
                 break;
             case 19:
-                avanca(&j, lexema, &c);
+                salvaLexema(&j, lexema, &c);
                 strcpy(token,"OP_DIV_REC");// /=
                 return true;
                 break;
@@ -274,18 +277,17 @@ bool analex(char *token, char *lexema){ //classificador de token
                 else{estado=22;}
                 break;
             case 21:
-                avanca(&j, lexema, &c);
-                // i--;
+                salvaLexema(&j, lexema, &c);
                 strcpy(token,"OP_INC"); //++
                 return true;
                 break;
             case 22:
                 strcpy(token,"OP_SOMA"); // +
-                // i--;
+                i--;
                 return true;
                 break;
             case 23:
-                avanca(&j, lexema, &c);
+                salvaLexema(&j, lexema, &c);
                 // i--;
                 strcpy(token,"OP_SOMA_REC"); //+=
                 return true;
@@ -298,23 +300,23 @@ bool analex(char *token, char *lexema){ //classificador de token
                 break;
             case 25:
                 strcpy(token,"OP_SUB"); // -
-                // i--;
+                i--;
                 return true;
                 break;
             case 26:
-                avanca(&j, lexema, &c);
+                salvaLexema(&j, lexema, &c);
                 // i--;
                 strcpy(token,"OP_DEC"); // --
                 return true;
                 break;
             case 27:
-                avanca(&j, lexema, &c);
+                salvaLexema(&j, lexema, &c);
                 // i--;
                 strcpy(token,"OP_SUB_REC"); // -=
                 return true;
                 break;
             case 28:
-                avanca(&j, lexema, &c);
+                salvaLexema(&j, lexema, &c);
                 // i--;
                 strcpy(token,"SETA"); // ->
                 return true;
@@ -324,14 +326,14 @@ bool analex(char *token, char *lexema){ //classificador de token
                 else{estado=31;}
                 break;
             case 30:
-                avanca(&j, lexema, &c);
+                salvaLexema(&j, lexema, &c);
                 // i--;
                 strcpy(token,"OP_MULT_REC"); // *=
                 return true;
                 break;
             case 31:
                 strcpy(token,"OP_MULT"); // *
-                // i--;
+                i--;
                 return true;
                 break;
             case 32:
@@ -340,11 +342,11 @@ bool analex(char *token, char *lexema){ //classificador de token
                 break;
             case 33:
                 strcpy(token,"OP_RESTO"); // %
-                // i--;
+                i--;
                 return true;
                 break;
             case 34:
-                avanca(&j, lexema, &c);
+                salvaLexema(&j, lexema, &c);
                 // i--;
                 strcpy(token,"OP_RESTO_REC"); // %=
                 return true;
@@ -354,14 +356,14 @@ bool analex(char *token, char *lexema){ //classificador de token
                 else{estado=37;}
                 break;
             case 36:
-                avanca(&j, lexema, &c);
+                salvaLexema(&j, lexema, &c);
                 // i--;
                 strcpy(token,"COMP_IGUAL"); // ==
                 return true;
                 break;
             case 37:
                 strcpy(token,"OP_ATRIB"); // =
-                // i--;
+                i--;
                 return true;
                 break;
             case 38:
@@ -369,12 +371,13 @@ bool analex(char *token, char *lexema){ //classificador de token
                 else{estado=40;}
                 break;
             case 39:
-                avanca(&j, lexema, &c);
+                salvaLexema(&j, lexema, &c);
                 strcpy(token,"COMP_DIF"); // !=
                 return true;
                 break;
             case 40:
                 strcpy(token,"OP_NOT"); // !
+                i--;
                 return true;
                 break;
             case 41:
@@ -382,12 +385,13 @@ bool analex(char *token, char *lexema){ //classificador de token
                 else{estado=43;}
                 break;
             case 42:
-                avanca(&j, lexema, &c);
+                salvaLexema(&j, lexema, &c);
                 strcpy(token,"MAIOR_IGUAL"); // >=
                 return true;
                 break;
             case 43:
                 strcpy(token,"MAIOR"); // >
+                i--;
                 return true;
                 break;
             case 44:
@@ -396,10 +400,11 @@ bool analex(char *token, char *lexema){ //classificador de token
                 break;
             case 45:
                 strcpy(token,"MENOR"); // <
+                i--;
                 return true;
                 break;
             case 46:
-                avanca(&j, lexema, &c);
+                salvaLexema(&j, lexema, &c);
                 strcpy(token,"MENOR_IGUAL"); // <=
                 return true;
                 break;
@@ -411,7 +416,7 @@ bool analex(char *token, char *lexema){ //classificador de token
                 }
                 break;
             case 48:
-                avanca(&j, lexema, &c);
+                salvaLexema(&j, lexema, &c);
                 strcpy(token,"OU"); // ||
                 return true;
                 break;
@@ -420,12 +425,13 @@ bool analex(char *token, char *lexema){ //classificador de token
                 else{estado=51;}
                 break;
             case 50:
-                avanca(&j, lexema, &c);
+                salvaLexema(&j, lexema, &c);
                 strcpy(token,"E"); // &&
                 return true;
                 break;
             case 51:
                 strcpy(token,"ENDERECO"); // &
+                i--;
                 return true;
                 break;
 

@@ -1,5 +1,18 @@
-int as =4
-3
+int as=4+=6 
+>av >=as id1&&id2 &id3
+!=bas 6!5
+5.425!
+"oi"!
+'o'!
+/a 
+++bas+=a 
+--a -b ->bas 
+*=bas *a * %as %=
+%=as
+/a
+/=a 
+/A 
+3!
 ==
 =
 &
