@@ -331,7 +331,7 @@ bool analex(char *token, char *lexema, hash_table *table){ //classificador de to
                 avanca(&j, lexema, &c);
                 break;
             case 63:
-                if(c == 't'|| c == 'n' || c == '0' || c == '\\'){estado=11; avanca(&j, lexema, &c);}
+                if(c == 't'|| c == 'n' || c == '0' || c == '\\' || c == '\''){estado=11; avanca(&j, lexema, &c);}
                 else{
                     gravar_token("ERRO no char", lexema);
                     exit(0);
