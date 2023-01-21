@@ -271,7 +271,7 @@ bool analex(char *token, char *lexema, hash_table *table){ //classificador de to
                 if(isdigit(c) || isalpha(c) || c == '$' || c == '_'){avanca(&j, lexema, &c);}
                 else if(!(isdigit(c) || isalpha(c) || c == '$' || c == '_')){estado = 2;}
                 break;
-            case 2:
+            case 2: //Estado Final de ID/Palavras Chave
                 strcpy(token, palavraReservada(lexema)); //verificar se é identificador, palavra reservada, booleano ou ID
                 if(strcmp(token, "ID") == 0){
                     insert_hash(table, lexema, &count_id);
@@ -282,6 +282,7 @@ bool analex(char *token, char *lexema, hash_table *table){ //classificador de to
             case 3:
                 if(isdigit(c)){avanca(&j, lexema, &c);}
                 else if(isalpha(c)){
+                    printf("ERRO no número\n");
                     gravar_token("ERRO no numero", lexema);
                     exit(0);
                 }
@@ -289,7 +290,7 @@ bool analex(char *token, char *lexema, hash_table *table){ //classificador de to
                 else{estado = 4;}
                 
                 break;
-            case 4:
+            case 4: //Estado Final de NUM_INT
                 strcpy(token, "NUM_INT");
                 i--;
                 return true;
@@ -297,6 +298,7 @@ bool analex(char *token, char *lexema, hash_table *table){ //classificador de to
             case 5:
                 if(isdigit(c)){estado = 6;avanca(&j, lexema, &c);}
                 else{
+                    printf("ERRO numero real incompleto\n");
                     gravar_token("ERRO numero real incompleto", lexema);
                     exit(0);
                 }
@@ -304,22 +306,28 @@ bool analex(char *token, char *lexema, hash_table *table){ //classificador de to
             case 6:
                 if(isdigit(c)){avanca(&j, lexema, &c);}
                 else if(isalpha(c)){
+                    printf("ERRO no numero real\n");
                     gravar_token("ERRO no numero real", lexema);
                     exit(0);
                 }
                 else{estado = 7;}
                 break;
-            case 7:
+            case 7: //Estado Final de NUM_REAL
                 strcpy(token,"NUM_REAL");
                 i--;
                 return true;
                 break;
             case 8:
                 if(c == '"'){estado = 9;}
+                else if (c == '\0'){
+                    printf("ERRO na String\n");
+                    gravar_token("ERRO na String", lexema);
+                    exit(0);
+                }
                 else{;}
                 avanca(&j, lexema, &c);
                 break;
-            case 9:
+            case 9: //Estado Final de String
                 strcpy(token,"STRING");
                 i--;
                 return true;
@@ -327,6 +335,11 @@ bool analex(char *token, char *lexema, hash_table *table){ //classificador de to
             case 10:
                 if(c == '\''){estado = 12;}
                 else if(c == '\\'){estado = 63;}
+                else if(c == '\0'){
+                    printf("ERRO no char \n");
+                    gravar_token("ERRO no char", lexema);
+                    exit(0);
+                }
                 else{estado = 11;}
                 avanca(&j, lexema, &c);
                 break;
@@ -339,12 +352,13 @@ bool analex(char *token, char *lexema, hash_table *table){ //classificador de to
             case 11:
                 if(c == '\''){estado = 12;}
                 else{
+                    printf("ERRO no char \n");
                     gravar_token("ERRO no char", lexema);
                     exit(0);
                 }
                 avanca(&j, lexema, &c);
                 break;
-            case 12:
+            case 12: //Estado Final de CHAR
                 strcpy(token,"CHAR");
                 i--;
                 return true;
@@ -355,7 +369,7 @@ bool analex(char *token, char *lexema, hash_table *table){ //classificador de to
                 else if(c == '*'){estado=16;}
                 else{estado=18;}
                 break;
-            case 14:
+            case 14: 
                 avanca(&j, lexema, &c);
                 if(c == '\n' || c == '\0'){strcpy(lexema,"");return true;}
                 else if(feof(file)){
@@ -372,15 +386,16 @@ bool analex(char *token, char *lexema, hash_table *table){ //classificador de to
                 avanca(&j, lexema, &c);
                 if(c == '/'){return true;}
                 else{
+                    printf("ERRO no comentário\n");
                     gravar_token("ERRO no comentário", lexema);
                     exit(0);
                 }
-            case 18:
+            case 18: //Estado Final de OP_DIV
                 strcpy(token,"OP_DIV");
                 i--;
                 return true;
                 break;
-            case 19:
+            case 19: //Estado Final de OP_DIV_REC
                 salvaLexema(&j, lexema, &c);
                 strcpy(token,"OP_DIV_REC");
                 return true;
@@ -390,17 +405,17 @@ bool analex(char *token, char *lexema, hash_table *table){ //classificador de to
                 else if(c == '='){estado=23;}
                 else{estado=22;}
                 break;
-            case 21:
+            case 21: //Estado Final de OP_INC
                 salvaLexema(&j, lexema, &c);
                 strcpy(token,"OP_INC"); 
                 return true;
                 break;
-            case 22:
+            case 22: ////Estado Final de OP_SOMA
                 strcpy(token,"OP_SOMA"); 
                 i--;
                 return true;
                 break;
-            case 23:
+            case 23: //Estado Final de OP_SOMA_REC
                 salvaLexema(&j, lexema, &c);
                 // i--;
                 strcpy(token,"OP_SOMA_REC"); 
@@ -412,22 +427,22 @@ bool analex(char *token, char *lexema, hash_table *table){ //classificador de to
                 else if(c == '>'){estado=28;}
                 else{estado=25;}
                 break;
-            case 25:
+            case 25: //Estado Final de OP_SUB
                 strcpy(token,"OP_SUB"); 
                 i--;
                 return true;
                 break;
-            case 26:
+            case 26: //Estado Final de OP_DEC
                 salvaLexema(&j, lexema, &c);
                 strcpy(token,"OP_DEC"); 
                 return true;
                 break;
-            case 27:
+            case 27: //Estado Final de OP_SUB_DEC
                 salvaLexema(&j, lexema, &c);
                 strcpy(token,"OP_SUB_REC"); 
                 return true;
                 break;
-            case 28:
+            case 28: //Estado Final de SETA
                 salvaLexema(&j, lexema, &c);
                 strcpy(token,"SETA"); 
                 return true;
@@ -436,12 +451,12 @@ bool analex(char *token, char *lexema, hash_table *table){ //classificador de to
                 if(c == '='){estado=30;}
                 else{estado=31;}
                 break;
-            case 30:
+            case 30: //Estado Final de OP_MULT_REC
                 salvaLexema(&j, lexema, &c);
                 strcpy(token,"OP_MULT_REC");
                 return true;
                 break;
-            case 31:
+            case 31: //Estado Final de OP_MULT
                 strcpy(token,"OP_MULT"); 
                 i--;
                 return true;
@@ -450,12 +465,12 @@ bool analex(char *token, char *lexema, hash_table *table){ //classificador de to
                 if(c == '='){estado=34;}
                 else{estado=33;}
                 break;
-            case 33:
+            case 33: //Estado Final de OP_RESTO
                 strcpy(token,"OP_RESTO"); 
                 i--;
                 return true;
                 break;
-            case 34:
+            case 34: //Estado Final de OP_RESTO_REC
                 salvaLexema(&j, lexema, &c);
                 strcpy(token,"OP_RESTO_REC"); 
                 return true;
@@ -464,12 +479,12 @@ bool analex(char *token, char *lexema, hash_table *table){ //classificador de to
                 if(c == '='){estado=36;}
                 else{estado=37;}
                 break;
-            case 36:
+            case 36: //Estado Final de COMP_IGUAL
                 salvaLexema(&j, lexema, &c);
                 strcpy(token,"COMP_IGUAL"); 
                 return true;
                 break;
-            case 37:
+            case 37: //Estado Final de OP_ATRIB
                 strcpy(token,"OP_ATRIB");
                 i--;
                 return true;
@@ -478,12 +493,12 @@ bool analex(char *token, char *lexema, hash_table *table){ //classificador de to
                 if(c == '='){estado=39;}
                 else{estado=40;}
                 break;
-            case 39:
+            case 39: //Estado Final de COMP_DIF
                 salvaLexema(&j, lexema, &c);
                 strcpy(token,"COMP_DIF");
                 return true;
                 break;
-            case 40:
+            case 40: //Estado Final de OP_NOT
                 strcpy(token,"OP_NOT"); 
                 i--;
                 return true;
@@ -492,12 +507,12 @@ bool analex(char *token, char *lexema, hash_table *table){ //classificador de to
                 if(c == '='){estado=42;}
                 else{estado=43;}
                 break;
-            case 42:
+            case 42: //Estado Final de MAIOR_IGUAL
                 salvaLexema(&j, lexema, &c);
                 strcpy(token,"MAIOR_IGUAL");
                 return true;
                 break;
-            case 43:
+            case 43: //Estado Final de MAIOR
                 strcpy(token,"MAIOR");
                 i--;
                 return true;
@@ -506,12 +521,12 @@ bool analex(char *token, char *lexema, hash_table *table){ //classificador de to
                 if(c == '='){estado=46;}
                 else{estado=45;}
                 break;
-            case 45:
+            case 45: //Estado Final de MENOR
                 strcpy(token,"MENOR");
                 i--;
                 return true;
                 break;
-            case 46:
+            case 46: //Estado Final de MENOR_IGUAL
                 salvaLexema(&j, lexema, &c);
                 strcpy(token,"MENOR_IGUAL");
                 return true;
@@ -519,11 +534,12 @@ bool analex(char *token, char *lexema, hash_table *table){ //classificador de to
             case 47:
                 if(c == '|'){estado=48;}
                 else{
+                    printf("ERRO de símbolo incompleto \n");
                     gravar_token("ERRO de simbolo incompleto", lexema);
                     exit(0);
                 }
                 break;
-            case 48:
+            case 48: //Estado Final de OU
                 salvaLexema(&j, lexema, &c);
                 strcpy(token,"OU");
                 return true;
@@ -532,67 +548,67 @@ bool analex(char *token, char *lexema, hash_table *table){ //classificador de to
                 if(c == '&'){estado=50;}
                 else{estado=51;}
                 break;
-            case 50:
+            case 50: //Estado Final de E
                 salvaLexema(&j, lexema, &c);
                 strcpy(token,"E");
                 return true;
                 break;
-            case 51:
+            case 51://Estado Final de ENDERECO
                 strcpy(token,"ENDERECO");
                 i--;
                 return true;
                 break;
-            case 52:
+            case 52: //Estado Final de VIRG
                 strcpy(token,"VIRG");
                 i--;
                 return true;
                 break;
-            case 53:
+            case 53: //Estado Final de PV
                 strcpy(token,"PV");
                 i--;
                 return true;
                 break;
-            case 54:
+            case 54: //Estado Final de PONTO
                 strcpy(token,"PONTO");
                 i--;
                 return true;
                 break;
-            case 55:
+            case 55: //Estado Final de ABRE_PAREN
                 strcpy(token,"ABRE_PAREN");
                 i--;
                 return true;
                 break;
-            case 56:
+            case 56: //Estado Final de FECHA_PAREN
                 strcpy(token,"FECHA_PAREN");
                 i--;
                 return true;
                 break;
-            case 57:
+            case 57: //Estado Final de FECHA_COLC
                 strcpy(token,"FECHA_COLC"); 
                 i--;
                 return true;
                 break;
-            case 58:
+            case 58: //Estado Final de ABRE_COLC
                 strcpy(token,"ABRE_COLC");
                 i--;
                 return true;
                 break;
-            case 59:
+            case 59: //Estado Final de ABRE_CHAV
                 strcpy(token,"ABRE_CHAV");
                 i--;
                 return true;
                 break;
-            case 60:
+            case 60: //Estado Final de FECHA_CHAV
                 strcpy(token,"FECHA_CHAV");
                 i--;
                 return true;
                 break;
-            case 61:
+            case 61: //Estado Final de OP_DOIS_PONTOS
                 strcpy(token,"OP_DOIS_PONTOS");
                 i--;
                 return true;
                 break;
-            case 62:
+            case 62: //Estado Final de OP_SELEC
                 strcpy(token,"OP_SELEC");
                 i--;
                 return true;
