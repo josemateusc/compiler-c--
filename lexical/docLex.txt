@@ -84,3 +84,4 @@ OP_ATRIB	=
 ENDERECO	&
 ID	id2
 COMP_DIF	!=
+STRING	"ola"
