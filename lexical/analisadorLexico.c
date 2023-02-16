@@ -243,7 +243,7 @@ char* palavraReservada(char *lexema){
         return "CONTINUE";
     }
     else if(strcmp("goto", lexema) == 0){
-        return "goto";
+        return "GOTO";
     }
     else if(strcmp("true", lexema) == 0){
         return "TRUE";
