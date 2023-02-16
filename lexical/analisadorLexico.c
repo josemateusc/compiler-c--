@@ -213,7 +213,7 @@ char* palavraReservada(char *lexema){
         return "FLOAT";
     }
     else if(strcmp("char", lexema) == 0){
-        return "CHAR";
+        return "CHAR_t";
     }
     else if(strcmp("bool", lexema) == 0){
         return "BOOL";
