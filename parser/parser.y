@@ -92,7 +92,7 @@ void yyerror(const char *);
 
 ////// declarações//////
 
-programa: lista-decl //1
+programa: lista-decl {printf("OK\n");} //1 
 		;
 
 lista-decl: lista-decl decl //2
@@ -148,8 +148,10 @@ com-exp: exp PV //13
 		;
 
 com-atrib: var OP_ATRIB exp PV //14
+		;
 
 com-comp: ABRE_CHAV decl-locais lista-com FECHA_CHAV //15
+		;
 
 com-selecao: IF ABRE_PAREN exp FECHA_PAREN comando  //16
 		   | IF ABRE_PAREN exp FECHA_PAREN com-comp ELSE comando
@@ -161,6 +163,7 @@ com-repeticao: WHILE ABRE_PAREN exp FECHA_PAREN comando //18
 
 com-retorno: RETURN PV //19
 		   | RETURN exp PV
+		   ;
 
 //////expressões//////
 exp: exp-soma op-relac exp-soma //19
@@ -301,13 +304,15 @@ int main(int argc, char ** argv){
 	
     if (argc > 1){
 		file = fopen(argv[1], "r");
-		if (file){
+		if (file == NULL){
 			cout << "Arquivo " << argv[1] << " não encontrado\n";
 			exit(1);
 		}
 		
 		/* entrada ajustada para ler do arquivo */
 	}
-
+	printf("\nInicio da Análise sintática!\n\n");
 	yyparse();
+	printf("\nFim de arquivo!\n");
+	fclose(file);
 }
