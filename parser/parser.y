@@ -229,8 +229,7 @@ int yylex() {
 
 	if(feof(file)) {
 		//fwrite
-		printf("\nFim de arquivo!\n");
-		exit(0);
+		return 0;
 	}
 
     fgets(linha, 100, file);
@@ -307,9 +306,7 @@ int yylex() {
 	else if(strcmp(token, "FECHA_CHAV") == 0){return FECHA_CHAV;}
 	else if(strcmp(token, "OP_DOIS_PONTOS") == 0){return OP_DOIS_PONTOS;}
 	else if(strcmp(token, "OP_SELEC") == 0){return OP_SELEC;}
-	else{exit(0);}
-
-	return 0;
+	else{return 0;} //Não é nenhum dos token (o que é impossível)
 }
 
 void yyerror(const char * s){
@@ -330,6 +327,6 @@ int main(int argc, char ** argv){
 	}
 	printf("\nInicio da Análise sintática!\n\n");
 	yyparse();
-	printf("\nFim do código!\n");
+	printf("\nFim da Análise!\nCódigo sem erros léxicos ou sintáticos\n");
 	fclose(file);
 }
