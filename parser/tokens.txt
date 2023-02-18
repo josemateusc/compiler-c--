@@ -1,5 +1,6 @@
 INT int
 ID  x
-OP_ATRIB    =
-NUM_INT 4
+PV  ;
+FLOAT   float
+ID  y
 PV  ;

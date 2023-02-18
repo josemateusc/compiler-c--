@@ -92,7 +92,7 @@ void yyerror(const char *);
 
 ////// declarações//////
 
-programa: lista-decl {printf("OK\n");} //1 
+programa: lista-decl //{printf("OK\n");} //1 
 		;
 
 lista-decl: lista-decl decl //2
@@ -103,10 +103,10 @@ decl: decl-var //3
 	| decl-func
 	;
 
-decl-var: espec-tipo var PV //4
+decl-var: espec-tipo var PV {printf("RECONHECE A SENTENÇA\n");}//4
 		;
 
-espec-tipo: INT //5
+espec-tipo: INT //{printf("RECONHECE INT\n");}//5
 		 | VOID
 		 |FLOAT
 		 ;
@@ -207,7 +207,7 @@ literais: NUM_INT //26
 
 chama-func: ID ABRE_PAREN args FECHA_PAREN //27
 
-var: ID //28
+var: ID //{printf("RECONHECE VAR\t"); cout << $1 << "\n";}//28
    | ID ABRE_COLC NUM_INT FECHA_COLC
    ;
 
@@ -227,12 +227,28 @@ int yylex() {
 	char *lexema;
 	size_t len;
 
+	if(feof(file)) {
+		//fwrite
+		printf("\nFim de arquivo!\n");
+		exit(0);
+	}
+
     fgets(linha, 100, file);
-	token = (char*)strtok(linha, "\t");
-	lexema = (char*)strtok(NULL, "\t");
+
+	token = (char*)strtok(linha, "  ");
+	/* printf("Pegando o token: %s\n", token); */
+
+	lexema = (char*)strtok(NULL, "  ");
+	/* printf("Pegando o lexema: %s\n", lexema); */
+
 	len = strlen(lexema);
 
+	if(len >1) lexema[len-1] = '\0';
+
+	printf("%s ", lexema);
+
 	yylval.str = new_mystring(lexema, len);
+	/* printf("yylval: %s\n", yylval.str->str); */
 
 	if(strcmp(token, "VOID") == 0){return VOID;}
 	else if(strcmp(token, "INT") == 0){return INT;}
@@ -291,12 +307,13 @@ int yylex() {
 	else if(strcmp(token, "FECHA_CHAV") == 0){return FECHA_CHAV;}
 	else if(strcmp(token, "OP_DOIS_PONTOS") == 0){return OP_DOIS_PONTOS;}
 	else if(strcmp(token, "OP_SELEC") == 0){return OP_SELEC;}
+	else{exit(0);}
 
 	return 0;
 }
 
 void yyerror(const char * s){
-    cout << "Erro!\n";
+    cout << "Erro Sintático!\n";
    	exit(0);
 }
 
@@ -313,6 +330,6 @@ int main(int argc, char ** argv){
 	}
 	printf("\nInicio da Análise sintática!\n\n");
 	yyparse();
-	printf("\nFim de arquivo!\n");
+	printf("\nFim do código!\n");
 	fclose(file);
 }
