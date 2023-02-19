@@ -1,6 +1,0 @@
-INT int
-ID  x
-PV  ;
-FLOAT   float
-ID  y
-PV  ;

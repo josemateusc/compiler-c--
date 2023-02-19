@@ -7,6 +7,8 @@ using namespace std;
 #include <string.h>
 
 FILE *file;
+FILE *output;
+char flag=0;
 
 typedef struct {
   char *str;
@@ -92,7 +94,7 @@ void yyerror(const char *);
 
 ////// declarações//////
 
-programa: lista-decl //{printf("OK\n");} //1 
+programa: lista-decl //1 
 		;
 
 lista-decl: lista-decl decl //2
@@ -103,10 +105,10 @@ decl: decl-var //3
 	| decl-func
 	;
 
-decl-var: espec-tipo var PV {printf("RECONHECE A SENTENÇA\n");}//4
+decl-var: espec-tipo var PV //4
 		;
 
-espec-tipo: INT //{printf("RECONHECE INT\n");}//5
+espec-tipo: INT //5
 		 | VOID
 		 |FLOAT
 		 ;
@@ -207,7 +209,7 @@ literais: NUM_INT //26
 
 chama-func: ID ABRE_PAREN args FECHA_PAREN //27
 
-var: ID //{printf("RECONHECE VAR\t"); cout << $1 << "\n";}//28
+var: ID //28
    | ID ABRE_COLC NUM_INT FECHA_COLC
    ;
 
@@ -226,9 +228,14 @@ int yylex() {
     char *token;
 	char *lexema;
 	size_t len;
+	if(flag == 1){
+		printf("OK\n");
+		fwrite("OK\n",sizeof(char),3,output);
+	}
+	
+	flag = 1;
 
 	if(feof(file)) {
-		//fwrite
 		return 0;
 	}
 
@@ -244,7 +251,11 @@ int yylex() {
 
 	if(len >1) lexema[len-1] = '\0';
 
-	printf("%s ", lexema);
+	printf("%s %s ", token,lexema);
+	fwrite(token,sizeof(char),strlen(token),output);
+	fwrite(" ",sizeof(char),1,output);
+	fwrite(lexema,sizeof(char),strlen(lexema),output);
+	fwrite(" ",sizeof(char),1,output);
 
 	yylval.str = new_mystring(lexema, len);
 	/* printf("yylval: %s\n", yylval.str->str); */
@@ -310,7 +321,9 @@ int yylex() {
 }
 
 void yyerror(const char * s){
-    cout << "Erro Sintático!\n";
+	char buffer[50] = "Erro Sintático!\n";
+    cout << buffer;
+	fwrite(buffer,sizeof(char),strlen(buffer),output);
    	exit(0);
 }
 
@@ -325,8 +338,9 @@ int main(int argc, char ** argv){
 		
 		/* entrada ajustada para ler do arquivo */
 	}
+	output = fopen("docParser.txt","wb");
 	printf("\nInicio da Análise sintática!\n\n");
 	yyparse();
-	printf("\nFim da Análise!\nCódigo sem erros léxicos ou sintáticos\n");
+	printf("\nFim da Análise!\nCódigo sem erros léxicos ou sintáticos!\n");
 	fclose(file);
 }
