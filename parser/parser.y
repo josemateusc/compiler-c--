@@ -1,4 +1,8 @@
 %{
+/* 
+Giovanna Andrade Santos - 22052563
+José Mateus Córdova Rodrigues - 22052567
+*/
 #include <iostream>
 #include <cctype>
 using namespace std;
@@ -229,7 +233,7 @@ int yylex() {
 	char *lexema;
 	size_t len;
 	if(flag == 1){
-		printf("OK\n");
+		/* printf("OK\n"); */
 		fwrite("OK\n",sizeof(char),3,output);
 	}
 	
@@ -251,7 +255,7 @@ int yylex() {
 
 	if(len >1) lexema[len-1] = '\0';
 
-	printf("%s %s ", token,lexema);
+	/* printf("%s %s ", token,lexema); */
 	fwrite(token,sizeof(char),strlen(token),output);
 	fwrite(" ",sizeof(char),1,output);
 	fwrite(lexema,sizeof(char),strlen(lexema),output);
