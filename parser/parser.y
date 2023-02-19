@@ -317,7 +317,8 @@ int yylex() {
 	else if(strcmp(token, "FECHA_CHAV") == 0){return FECHA_CHAV;}
 	else if(strcmp(token, "OP_DOIS_PONTOS") == 0){return OP_DOIS_PONTOS;}
 	else if(strcmp(token, "OP_SELEC") == 0){return OP_SELEC;}
-	else{return 0;} 
+	else{return 0;}
+}
 
 void yyerror(const char * s){
 	char buffer[50] = "Erro Sintático!\n";
