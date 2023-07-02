@@ -10,7 +10,7 @@ g++ parser.tab.c -std=c++17 -o parser
 
 ./parser docLex.txt
 
-rm parser parser.tab.c analex Tabela_de_simbolos.txt
+rm parser parser.tab.c analex
 
 
 clear
