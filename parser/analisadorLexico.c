@@ -131,7 +131,7 @@ void gravar_token(char *token, char *lexema){
         strcpy(buffer,"\n");
     }
     strcat(buffer,token);
-    strcat(buffer,"\t");
+    strcat(buffer," ");
     strcat(buffer,lexema);
     fwrite(buffer, sizeof(char), strlen(buffer), docLex);
     
